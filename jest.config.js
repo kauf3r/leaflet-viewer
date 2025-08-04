@@ -36,11 +36,8 @@ const config = {
   },
 
   // Module resolution
-  moduleNameMapping: {
+  moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
-    '^@/components/(.*)$': '<rootDir>/src/components/$1',
-    '^@/lib/(.*)$': '<rootDir>/src/lib/$1',
-    '^@/types/(.*)$': '<rootDir>/src/types/$1',
     
     // Handle CSS imports (with CSS modules)
     '^.+\\.module\\.(css|sass|scss)$': 'identity-obj-proxy',
@@ -84,10 +81,6 @@ const config = {
 
   // Verbose output for development
   verbose: process.env.NODE_ENV === 'development',
-
-  // Global setup for geospatial testing
-  globalSetup: '<rootDir>/src/__tests__/global-setup.js',
-  globalTeardown: '<rootDir>/src/__tests__/global-teardown.js',
 }
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
