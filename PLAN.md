@@ -103,37 +103,71 @@ To create the world's most accessible and powerful web-based GeoTIFF visualizati
 - Load time < 5 seconds
 - Basic responsive functionality
 
-### Phase 2: Core Features (Weeks 3-4)
-**Target**: Multi-layer support and comparison tools
+### Phase 1.5: Enterprise Infrastructure (Weeks 3-4)
+**Target**: Large file support and cloud processing architecture
 
-#### 2.1 Multi-Layer Management
-- [ ] Implement layer management system with Zustand store
-- [ ] Build layer panel with visibility toggles and opacity sliders
-- [ ] Add support for 2-4 concurrent layers
-- [ ] Implement memory management for multiple layers
+#### 1.5.1 Server-Side Processing Pipeline
+- [ ] Set up cloud storage integration (AWS S3/Google Cloud/Azure)
+- [ ] Implement server-side GDAL processing for file conversion
+- [ ] Build job queue system for background processing (Redis/Bull)
+- [ ] Create API endpoints for file upload, processing, and tile serving
 
-#### 2.2 Comparison Tools
-- [ ] Side-by-side viewer component
-- [ ] Swipe/slider comparison mode
-- [ ] Synchronized pan/zoom for comparisons
-- [ ] Layer blending and transparency controls
+#### 1.5.2 Chunked Upload System
+- [ ] Implement resumable chunked upload for large files (50GB+)
+- [ ] Add upload progress tracking with pause/resume capability
+- [ ] Build file validation and integrity checking
+- [ ] Create upload queue management for multiple concurrent uploads
 
-#### 2.3 Performance Optimization
-- [ ] Implement Web Workers for heavy processing
-- [ ] Add tile-based streaming for large files (up to 1GB)
-- [ ] Create progressive loading system with quality levels
-- [ ] Build LRU cache system for memory management
+#### 1.5.3 COG Processing & Tile Generation
+- [ ] Implement Cloud Optimized GeoTIFF (COG) detection and conversion
+- [ ] Build tile pyramid generation with multiple resolution levels
+- [ ] Add metadata extraction and storage system
+- [ ] Create tile serving API with caching and CDN integration
 
-#### 2.4 Basic Annotations
-- [ ] Drawing tools (points, lines, polygons) using Leaflet.Draw
-- [ ] Distance and area measurement tools
-- [ ] Pop-up information displays
-- [ ] Basic annotation export as GeoJSON
+#### 1.5.4 Memory & Performance Architecture
+- [ ] Implement tile-based streaming viewer (replace image overlay)
+- [ ] Build LRU tile cache with memory pressure monitoring
+- [ ] Add progressive loading with quality levels
+- [ ] Create memory cleanup and garbage collection system
 
 **Success Criteria**:
-- Support 1GB+ GeoTIFF files
-- Smooth 60fps pan/zoom performance
-- 2-4 concurrent layers without memory issues
+- Support 50GB+ GeoTIFF files
+- Resumable uploads with <5% failure rate
+- Initial tile view loads in <10 seconds
+- Memory usage stays under 2GB browser limit
+
+### Phase 2: Advanced Features (Weeks 5-6)
+**Target**: Multi-layer support and comparison tools
+
+#### 2.1 Enhanced Multi-Layer Management
+- [ ] Support 4-8 concurrent layers with tile compositing
+- [ ] Build advanced layer panel with grouping and organization
+- [ ] Add layer reordering with drag-and-drop
+- [ ] Implement server-side layer blending and compositing
+
+#### 2.2 Comparison Tools
+- [ ] Side-by-side viewer with synchronized tiles
+- [ ] Swipe/slider comparison with tile alignment
+- [ ] Temporal comparison for time-series data
+- [ ] Statistical comparison and difference visualization
+
+#### 2.3 Enterprise Performance Features
+- [ ] Implement tile prefetching and smart caching
+- [ ] Add WebGL acceleration for large datasets
+- [ ] Build cluster support for distributed processing
+- [ ] Create performance monitoring and optimization tools
+
+#### 2.4 Advanced Annotations
+- [ ] Drawing tools with server-side persistence
+- [ ] Advanced measurement tools (volume, contour analysis)
+- [ ] Collaborative annotations with real-time sync
+- [ ] Export annotations in multiple formats (GeoJSON, KML, Shapefile)
+
+**Success Criteria**:
+- 4-8 concurrent large layers without performance degradation
+- Sub-second tile loading for cached data
+- Real-time collaboration support
+- Enterprise-grade annotation capabilities
 
 ### Phase 3: Enhancement Features (Weeks 5-6)
 **Target**: Advanced features and optimization
@@ -318,12 +352,14 @@ Export → Layer Merge → Format Convert → Download/Share
 ### Performance Targets
 | Metric | Target | Strategy |
 |--------|--------|----------|
-| Initial Load | < 3s | Code splitting + lazy loading + resource hints |
-| Pan/Zoom | 60fps | Tile-based rendering + GPU acceleration |
-| File Size | 1GB+ | Streaming + COG optimization + progressive loading |
+| Initial Load | < 10s | Server-side tile generation + progressive loading |
+| Pan/Zoom | 60fps | COG tile streaming + GPU acceleration + tile prefetching |
+| File Size | 50GB+ | Server-side GDAL processing + chunked upload + tile pyramid |
 | Bundle Size | < 500KB | Strategic imports + tree shaking + compression |
-| Concurrent Layers | 2-4 | Smart memory management + priority queuing |
-| Memory Usage | < 500MB | LRU caching + garbage collection + worker isolation |
+| Concurrent Layers | 4-8 | Intelligent tile caching + server-side compositing |
+| Memory Usage | < 2GB browser | LRU tile cache + server processing + aggressive cleanup |
+| Upload Speed | Resumable | Chunked upload with pause/resume + progress tracking |
+| Tile Serving | < 200ms | CDN delivery + smart caching + pyramid optimization |
 
 ## 🔒 Security Implementation
 
@@ -396,21 +432,32 @@ Export → Layer Merge → Format Convert → Download/Share
 
 ### Backend & Processing Technologies
 
-#### WebAssembly & Processing
+#### Server-Side Processing (Required for 50GB+ files)
 | Technology | Version | Purpose | Justification |
 |------------|---------|---------|---------------|
-| **GDAL WebAssembly** | 3.7+ | Geospatial data processing | Client-side processing, no server infrastructure |
-| **Web Workers** | Native | Background processing | Non-blocking UI, parallel processing |
-| **IndexedDB API** | Native | Browser storage | Large data storage, offline capabilities |
-| **Service Workers** | Native | Caching & offline | Performance optimization, offline functionality |
+| **GDAL** | 3.7+ | Server-side geospatial processing | Handle large files, COG conversion, tile generation |
+| **Node.js/Express** | 18+ | API server | File upload, processing coordination, tile serving |
+| **Redis** | 7+ | Job queue & caching | Background processing, tile cache, session storage |
+| **PostgreSQL** | 15+ | Metadata storage | File metadata, processing status, user data |
+| **Sharp** | Latest | Image processing | Thumbnail generation, format conversion |
 
-#### Optional Cloud Services
+#### WebAssembly & Client Processing
+| Technology | Version | Purpose | Justification |
+|------------|---------|---------|---------------|
+| **GDAL WebAssembly** | 3.7+ | Small file processing | Client-side processing for files <1GB |
+| **Web Workers** | Native | Background processing | Non-blocking UI, tile management |
+| **IndexedDB API** | Native | Browser storage | Tile caching, offline capabilities |
+| **Service Workers** | Native | Caching & offline | Performance optimization, tile delivery |
+
+#### Cloud Services (Required for Enterprise Scale)
 | Service | Purpose | Integration Level |
 |---------|---------|-------------------|
-| **AWS S3** | File storage | Optional - for hosted GeoTIFF URLs |
-| **Google Cloud Storage** | File storage | Optional - alternative cloud storage |
-| **Azure Blob Storage** | File storage | Optional - enterprise integration |
-| **CloudFlare CDN** | Asset delivery | Optional - performance optimization |
+| **AWS S3** | Primary file storage | Required - large file storage and serving |
+| **Google Cloud Storage** | Alternative storage | Required - enterprise alternative |
+| **Azure Blob Storage** | Enterprise storage | Required - enterprise integration |
+| **CloudFlare CDN** | Tile delivery | Required - global tile distribution |
+| **AWS Lambda** | Processing functions | Optional - serverless processing |
+| **Google Cloud Functions** | Processing functions | Optional - serverless alternative |
 
 ### Development Tools & Environment
 

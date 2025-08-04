@@ -74,6 +74,18 @@ export interface Env {
   // Optional Tile Server Configuration
   NEXT_PUBLIC_TILE_SERVER_URL?: string;
   NEXT_PUBLIC_SATELLITE_TILE_URL?: string;
+
+  // Enterprise Processing Configuration
+  NEXT_PUBLIC_ENABLE_LARGE_FILE_PROCESSING?: boolean;
+  NEXT_PUBLIC_CHUNK_SIZE_MB?: number;
+  NEXT_PUBLIC_MAX_UPLOAD_WORKERS?: number;
+  
+  // Server-side Processing (when available)
+  DATABASE_URL?: string;
+  REDIS_URL?: string;
+  PROCESSING_QUEUE_NAME?: string;
+  MAX_PROCESSING_WORKERS?: number;
+  GDAL_CACHE_MAX_MB?: number;
 }
 
 // Default values for environment variables
@@ -81,9 +93,9 @@ const defaultEnv: Env = {
   NODE_ENV: 'development',
   NEXT_PUBLIC_APP_URL: 'http://localhost:3000',
   NEXT_PUBLIC_APP_NAME: 'GeoTIFF Showcase Tool',
-  NEXT_PUBLIC_MAX_FILE_SIZE_MB: 1024,
-  NEXT_PUBLIC_SUPPORTED_FORMATS: 'tif,tiff,gtiff',
-  NEXT_PUBLIC_MAX_CONCURRENT_LAYERS: 4,
+  NEXT_PUBLIC_MAX_FILE_SIZE_MB: 51200, // 50GB default (50 * 1024 MB)
+  NEXT_PUBLIC_SUPPORTED_FORMATS: 'tif,tiff,gtiff,cog',
+  NEXT_PUBLIC_MAX_CONCURRENT_LAYERS: 8, // Increased for enterprise use
   NEXT_PUBLIC_DEFAULT_MAP_CENTER_LAT: 0,
   NEXT_PUBLIC_DEFAULT_MAP_CENTER_LNG: 0,
   NEXT_PUBLIC_DEFAULT_ZOOM_LEVEL: 2,

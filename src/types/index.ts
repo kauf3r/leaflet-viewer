@@ -34,6 +34,7 @@ export interface GeoTIFFLayer {
   id: string;
   name: string;
   url: string;
+  rawData?: ArrayBuffer; // Store raw file data for direct access
   metadata: GeoTIFFMetadata;
   bounds: GeoTIFFBounds;
   opacity: number;
