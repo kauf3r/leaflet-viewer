@@ -12,6 +12,9 @@
 
 # testing
 /coverage
+/.jest-cache
+/playwright-report/
+/test-results/
 
 # next.js
 /.next/
@@ -32,6 +35,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -39,3 +43,36 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Editor directories and files
+.vscode/settings.json
+.idea
+*.swp
+*.swo
+*~
+
+# GeoTIFF test files and uploads
+/uploads/
+/test-data/
+*.tif
+*.tiff
+*.gtiff
+
+# Performance and monitoring
+/performance-reports/
+/bundle-analyzer/
+
+# Cache directories
+.cache/
+.parcel-cache/
+.tmp/
+
+# Coverage directory used by tools like istanbul
+*.lcov
+
+# Storybook build outputs
+build-storybook/
+storybook-static/
+
+# Sentry
+.sentryclirc
