@@ -58,8 +58,14 @@ const config = {
 
   // Test patterns
   testMatch: [
-    '<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}',
+    '<rootDir>/src/**/__tests__/**/*.(test|spec).{js,jsx,ts,tsx}',
     '<rootDir>/src/**/*.(test|spec).{js,jsx,ts,tsx}',
+  ],
+  
+  // Exclude setup files from being treated as tests
+  testPathIgnorePatterns: [
+    '<rootDir>/node_modules/',
+    '<rootDir>/src/__tests__/setup.ts',
   ],
 
   // Transform configuration

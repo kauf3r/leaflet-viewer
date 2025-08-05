@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useCallback } from 'react';
-import { Upload, X, FileX, CheckCircle, AlertCircle } from 'lucide-react';
+import { Upload, X, CheckCircle, AlertCircle } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -33,7 +33,8 @@ export const FileUploadDialog: React.FC<FileUploadDialogProps> = ({
 }) => {
   const [uploadFiles, setUploadFiles] = useState<UploadFile[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
-  const { addLayer, setLoading, setError } = useAppStore();
+  const { addLayer } = useAppStore();
+  // const [setLoading, setError] = useState(); // TODO: Use for global loading/error state
 
   const MAX_FILE_SIZE = 1024 * 1024 * 1024; // 1GB
   const ACCEPTED_TYPES = ['.tif', '.tiff', '.gtiff'];

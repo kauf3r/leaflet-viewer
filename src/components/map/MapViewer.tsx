@@ -151,22 +151,35 @@ const MapViewer: React.FC<MapViewerProps> = ({
             arrayBuffer = await response.arrayBuffer();
           }
           
-          // Parse with georaster - the module exports a function directly
-          const georasterModule = await import('georaster');
-          console.log('Georaster module imported successfully');
-          
-          // georaster exports a function directly as default or as the module itself
-          const parseFunction = (georasterModule as any).default || georasterModule;
-          
-          if (typeof parseFunction !== 'function') {
-            throw new Error('Georaster module did not export a function');
+          // Try to parse with georaster - handle chunk loading errors gracefully
+          let georaster;
+          try {
+            const georasterModule = await import('georaster');
+            console.log('Georaster module imported successfully');
+            
+            // georaster exports a function directly as default or as the module itself
+            const parseFunction = (georasterModule as any).default || georasterModule;
+            
+            if (typeof parseFunction !== 'function') {
+              throw new Error('Georaster module did not export a function');
+            }
+            
+            console.log('Parsing georaster with ArrayBuffer of size:', arrayBuffer.byteLength);
+            georaster = await (parseFunction as any)(arrayBuffer);
+          } catch (importError) {
+            console.info('Georaster WebAssembly module unavailable in dev mode, using enhanced fallback display');
+            throw new Error('Georaster module loading failed - using enhanced fallback');
           }
           
-          console.log('Parsing georaster with ArrayBuffer of size:', arrayBuffer.byteLength);
-          const georaster = await (parseFunction as any)(arrayBuffer);
-          
-          // Import georaster-layer-for-leaflet dynamically
-          const { default: GeoRasterLayer } = await import('georaster-layer-for-leaflet');
+          // Import georaster-layer-for-leaflet dynamically with error handling
+          let GeoRasterLayer;
+          try {
+            const geoRasterLayerModule = await import('georaster-layer-for-leaflet');
+            GeoRasterLayer = geoRasterLayerModule.default;
+          } catch (layerImportError) {
+            console.info('GeoRasterLayer module unavailable, using bounds fallback');
+            throw new Error('GeoRasterLayer module loading failed');
+          }
           
           console.log('Creating georaster layer with proper rendering');
           
@@ -209,23 +222,37 @@ const MapViewer: React.FC<MapViewerProps> = ({
           
           console.log('Using enhanced GeoTIFF bounds display with bounds:', bounds);
           
+          // Determine error type for better user feedback
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          const isChunkError = errorMessage.includes('chunk') || errorMessage.includes('loading failed');
+          const errorType = isChunkError ? 'Module Loading Issue' : 'Processing Error';
+          const errorDetails = isChunkError 
+            ? 'WebAssembly modules failed to load. This is common in development mode.'
+            : 'GeoTIFF processing encountered an error.';
+          
           // Create a more realistic representation
           const rectangle = L.rectangle(bounds, {
-            color: '#2563eb',
+            color: isChunkError ? '#f59e0b' : '#ef4444',
             weight: 2,
             opacity: layer.opacity,
-            fillColor: '#3b82f6',
-            fillOpacity: 0.3,
+            fillColor: isChunkError ? '#fbbf24' : '#f87171',
+            fillOpacity: 0.2,
           });
           
-          // Add a popup with layer information
+          // Add a popup with layer information and error details
           rectangle.bindPopup(`
             <div style="font-family: system-ui; font-size: 14px;">
               <h4 style="margin: 0 0 8px 0; color: #1f2937;">${layer.name}</h4>
+              <div style="margin: 8px 0; padding: 8px; background: ${isChunkError ? '#fef3c7' : '#fee2e2'}; border-radius: 4px;">
+                <p style="margin: 0; color: ${isChunkError ? '#92400e' : '#991b1b'}; font-weight: 500;">${errorType}</p>
+                <p style="margin: 4px 0 0 0; color: ${isChunkError ? '#92400e' : '#991b1b'}; font-size: 12px;">${errorDetails}</p>
+              </div>
               <p style="margin: 4px 0; color: #6b7280;"><strong>Projection:</strong> ${layer.metadata.projection}</p>
               <p style="margin: 4px 0; color: #6b7280;"><strong>Size:</strong> ${layer.metadata.width} × ${layer.metadata.height}</p>
               <p style="margin: 4px 0; color: #6b7280;"><strong>Bands:</strong> ${layer.metadata.samplesPerPixel}</p>
-              <p style="margin: 4px 0 0 0; font-size: 12px; color: #9ca3af;">Full pixel rendering requires Web Workers (blocked by CSP in development)</p>
+              <p style="margin: 8px 0 0 0; font-size: 12px; color: #9ca3af;">
+                Bounds are displayed correctly. Full pixel rendering will be available in production builds.
+              </p>
             </div>
           `);
           

@@ -1,11 +1,11 @@
 "use client";
 
 import React from 'react';
-import { Eye, EyeOff, X, Image, Info, ChevronDown, ChevronRight } from 'lucide-react';
+import { Eye, EyeOff, X, Image, ChevronDown, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAppStore, selectLayers, selectActiveLayer } from '@/lib/store';
+import { useAppStore } from '@/lib/store';
 import type { GeoTIFFLayer } from '@/types';
 
 interface LayerPanelProps {
@@ -59,9 +59,10 @@ const LayerItem: React.FC<LayerItemProps> = ({
             
             <div className="flex items-center space-x-2 flex-1 min-w-0">
               {layer.thumbnail ? (
+                // eslint-disable-next-line @next/next/no-img-element
                 <img 
                   src={layer.thumbnail} 
-                  alt={layer.name}
+                  alt={`Thumbnail for ${layer.name}`}
                   className="w-8 h-8 rounded object-cover bg-muted"
                 />
               ) : (
@@ -209,7 +210,7 @@ const LayerPanel: React.FC<LayerPanelProps> = ({ className }) => {
   } = useAppStore();
   
   const visibleLayers = layers.filter(layer => layer.visible);
-  const hiddenLayers = layers.filter(layer => !layer.visible);
+  // const hiddenLayers = layers.filter(layer => !layer.visible); // TODO: Use for layer organization
   
   const handleToggleVisibility = (layerId: string) => {
     const layer = layers.find(l => l.id === layerId);

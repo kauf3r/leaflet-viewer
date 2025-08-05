@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Suspense } from "react";
 import { WebVitals } from "@/lib/web-vitals";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
 
 // Optimize font loading for performance
 const geistSans = Geist({
@@ -38,7 +39,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning={true}>
       <head>
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#000000" />
@@ -47,10 +48,17 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning={true}
       >
-        <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>}>
-          {children}
-        </Suspense>
-        <WebVitals />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>}>
+            {children}
+          </Suspense>
+          <WebVitals />
+        </ThemeProvider>
       </body>
     </html>
   );

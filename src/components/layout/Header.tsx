@@ -5,7 +5,7 @@ import { Upload, Settings, Share2, Download, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+// import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'; // TODO: Use for settings dialog
 import { FileUploadDialog } from '@/components/upload/FileUploadDialog';
 import { useAppStore } from '@/lib/store';
 

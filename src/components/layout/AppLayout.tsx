@@ -4,7 +4,11 @@ import React, { useState } from 'react';
 import { Header } from './Header';
 import { Sidebar } from './Sidebar';
 import { StatusBar } from './StatusBar';
-import MapViewer from '@/components/map/MapViewer';
+import { LazyMapViewer } from '@/lib/lazy-imports';
+import { ShareDialog } from '@/components/sharing/ShareDialog';
+import { ExportDialog } from '@/components/export/ExportDialog';
+import { SettingsDialog } from '@/components/settings/SettingsDialog';
+import { Toaster } from '@/components/ui/sonner';
 
 interface AppLayoutProps {
   children?: React.ReactNode;
@@ -12,20 +16,20 @@ interface AppLayoutProps {
 
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [mouseCoordinates, setMouseCoordinates] = useState<[number, number] | null>(null);
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const [settingsDialogOpen, setSettingsDialogOpen] = useState(false);
 
   const handleShare = () => {
-    // TODO: Implement share functionality
-    console.log('Share clicked');
+    setShareDialogOpen(true);
   };
 
   const handleExport = () => {
-    // TODO: Implement export functionality
-    console.log('Export clicked');
+    setExportDialogOpen(true);
   };
 
   const handleSettings = () => {
-    // TODO: Implement settings dialog
-    console.log('Settings clicked');
+    setSettingsDialogOpen(true);
   };
 
   const handleMouseCoordinatesChange = (coords: [number, number] | null) => {
@@ -45,7 +49,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       <div className="flex-1 flex overflow-hidden">
         {/* Map Container */}
         <div className="flex-1 relative">
-          <MapViewer 
+          <LazyMapViewer 
             className="w-full h-full"
             onMouseCoordinatesChange={handleMouseCoordinatesChange}
           />
@@ -58,6 +62,27 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
       {/* Status Bar */}
       <StatusBar mouseCoordinates={mouseCoordinates} />
+      
+      {/* Share Dialog */}
+      <ShareDialog 
+        open={shareDialogOpen} 
+        onOpenChange={setShareDialogOpen} 
+      />
+      
+      {/* Export Dialog */}
+      <ExportDialog 
+        open={exportDialogOpen} 
+        onOpenChange={setExportDialogOpen} 
+      />
+      
+      {/* Settings Dialog */}
+      <SettingsDialog 
+        open={settingsDialogOpen} 
+        onOpenChange={setSettingsDialogOpen} 
+      />
+      
+      {/* Toast Notifications */}
+      <Toaster />
     </div>
   );
 };

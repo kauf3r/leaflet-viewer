@@ -16,7 +16,7 @@ const eslintConfig = [
       // Relax some rules for development
       "@typescript-eslint/no-unused-vars": "warn",
       "@typescript-eslint/no-explicit-any": "warn",
-      "react-hooks/exhaustive-deps": "off", // Temporary disable due to ESLint issue
+      "react-hooks/exhaustive-deps": "off", // ESLint issue with a.getSource - investigate separately
     },
   },
 ];

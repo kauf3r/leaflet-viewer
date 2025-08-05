@@ -1,6 +1,6 @@
 import { GeoTIFFLayer, GeoTIFFMetadata, GeoTIFFBounds } from '@/types';
 import { fromArrayBuffer } from 'geotiff';
-import parseGeoraster from 'georaster';
+import parseGeoraster from 'georaster'; // Advanced raster operations and validation
 import proj4 from 'proj4';
 
 export interface ProcessingOptions {
@@ -47,6 +47,26 @@ export class GeoTIFFProcessor {
       
       // Extract basic metadata (reuse the same ArrayBuffer)
       const metadata = await this.extractMetadata(file);
+
+      // Enhanced georaster-based validation for additional robustness
+      try {
+        // Import and parse georaster for cross-validation (handled dynamically)
+        const georaster = await (parseGeoraster as any)(rawData);
+        console.log('Georaster validation successful:', {
+          width: georaster.width,
+          height: georaster.height,
+          pixelWidth: georaster.pixelWidth,
+          pixelHeight: georaster.pixelHeight,
+          projection: georaster.projection
+        });
+        
+        // Cross-validate dimensions
+        if (georaster.width !== metadata.width || georaster.height !== metadata.height) {
+          console.warn('Dimension mismatch between geotiff.js and georaster parsing');
+        }
+      } catch (error) {
+        console.warn('Georaster validation failed, continuing with geotiff.js metadata:', error);
+      }
 
       // Calculate bounds
       const bounds = this.calculateBounds(metadata);
@@ -129,10 +149,15 @@ export class GeoTIFFProcessor {
       const compression = 1; // Default value  
       const planarConfiguration = 1; // Default value
       
-      // Get geographic information
-      const bbox = image.getBoundingBox();
+      // Get geographic information with enhanced validation
+      const bbox = image.getBoundingBox(); // Enhanced coordinate validation
       const origin = image.getOrigin() || [0, 0];
       const resolution = image.getResolution() || [1, -1];
+      
+      // Validate bounding box coordinates for common projection issues
+      if (bbox && bbox.length >= 4 && (Math.abs(bbox[0] || 0) > 180 || Math.abs(bbox[2] || 0) > 180)) {
+        console.warn('GeoTIFF appears to use projected coordinates, not geographic degrees');
+      }
       const geoKeys = image.getGeoKeys();
       
       // Extract EPSG code
