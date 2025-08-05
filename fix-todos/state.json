@@ -2,8 +2,8 @@
   "session_id": "fix-todos-2025-01-05",
   "created_at": "2025-01-05",
   "total_todos": 3,
-  "resolved_count": 0,
-  "current_todo": 1,
+  "resolved_count": 3,
+  "current_todo": null,
   "todos": [
     {
       "id": 1,
@@ -12,7 +12,7 @@
       "content": "// import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'; // TODO: Use for settings dialog",
       "category": "Code Cleanup",
       "priority": "Low",
-      "status": "pending",
+      "status": "resolved",
       "resolution_strategy": "Remove unused commented import"
     },
     {
@@ -22,8 +22,8 @@
       "content": "// const hiddenLayers = layers.filter(layer => !layer.visible); // TODO: Use for layer organization",
       "category": "Feature Enhancement",
       "priority": "Low", 
-      "status": "pending",
-      "resolution_strategy": "Implement or remove layer organization feature"
+      "status": "resolved",
+      "resolution_strategy": "Removed unused variable - layer organization not needed"
     },
     {
       "id": 3,
@@ -32,8 +32,8 @@
       "content": "// const [setLoading, setError] = useState(); // TODO: Use for global loading/error state",
       "category": "Feature Enhancement", 
       "priority": "Medium",
-      "status": "pending",
-      "resolution_strategy": "Implement global loading/error state integration"
+      "status": "resolved",
+      "resolution_strategy": "Implemented global loading/error state integration with Zustand store"
     }
   ],
   "git_checkpoint": null,

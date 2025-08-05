@@ -210,7 +210,6 @@ const LayerPanel: React.FC<LayerPanelProps> = ({ className }) => {
   } = useAppStore();
   
   const visibleLayers = layers.filter(layer => layer.visible);
-  // const hiddenLayers = layers.filter(layer => !layer.visible); // TODO: Use for layer organization
   
   const handleToggleVisibility = (layerId: string) => {
     const layer = layers.find(l => l.id === layerId);

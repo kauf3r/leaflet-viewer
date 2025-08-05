@@ -33,8 +33,7 @@ export const FileUploadDialog: React.FC<FileUploadDialogProps> = ({
 }) => {
   const [uploadFiles, setUploadFiles] = useState<UploadFile[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
-  const { addLayer } = useAppStore();
-  // const [setLoading, setError] = useState(); // TODO: Use for global loading/error state
+  const { addLayer, setLoading, setError } = useAppStore();
 
   const MAX_FILE_SIZE = 1024 * 1024 * 1024; // 1GB
   const ACCEPTED_TYPES = ['.tif', '.tiff', '.gtiff'];
@@ -56,6 +55,10 @@ export const FileUploadDialog: React.FC<FileUploadDialogProps> = ({
 
   const processFile = async (uploadFile: UploadFile) => {
     try {
+      // Set global loading state
+      setLoading(true);
+      setError(null);
+      
       setUploadFiles(prev => 
         prev.map(f => 
           f.id === uploadFile.id 
@@ -93,16 +96,25 @@ export const FileUploadDialog: React.FC<FileUploadDialogProps> = ({
             : f
         )
       );
+      
+      // Clear global loading state on success
+      setLoading(false);
 
     } catch (error) {
       console.error('File processing failed:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Processing failed';
+      
+      // Set global error state
+      setLoading(false);
+      setError(`Failed to process ${uploadFile.file.name}: ${errorMessage}`);
+      
       setUploadFiles(prev => 
         prev.map(f => 
           f.id === uploadFile.id 
             ? { 
                 ...f, 
                 status: 'error', 
-                error: error instanceof Error ? error.message : 'Processing failed'
+                error: errorMessage
               }
             : f
         )
