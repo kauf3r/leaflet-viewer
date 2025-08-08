@@ -1,0 +1,157 @@
+# ===========================================
+# GeoTIFF Processing Platform - Development Environment
+# ===========================================
+
+version: '3.8'
+
+services:
+  # ===========================================
+  # Database (PostgreSQL with PostGIS)
+  # ===========================================
+  postgres:
+    image: postgis/postgis:15-3.3
+    container_name: geotiff-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: geotiff_db
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./packages/server/database/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d geotiff_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - geotiff-network
+
+  # ===========================================
+  # API Server (NestJS)
+  # ===========================================
+  api:
+    build:
+      context: .
+      dockerfile: packages/server/Dockerfile.dev
+    container_name: geotiff-api
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: user
+      DB_PASSWORD: pass
+      DB_DATABASE: geotiff_db
+      DB_SYNCHRONIZE: "true"
+      DB_LOGGING: "true"
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_REGION: us-east-1
+      AWS_S3_BUCKET: geotiff-dev-bucket
+      JWT_SECRET: dev-secret-key-not-for-production
+      TEMP_DIRECTORY: /tmp/geotiff-processing
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./packages/server:/app
+      - /app/node_modules
+      - geotiff_temp:/tmp/geotiff-processing
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3001/api/v1/health/simple || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - geotiff-network
+
+  # ===========================================
+  # Frontend (Next.js - existing viewer)
+  # ===========================================
+  frontend:
+    build:
+      context: ./packages/viewer
+      dockerfile: Dockerfile.dev
+    container_name: geotiff-frontend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_URL: http://localhost:3001/api/v1
+      NEXT_PUBLIC_APP_NAME: GeoTIFF Viewer
+      NEXT_PUBLIC_APP_VERSION: 1.0.2
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./packages/viewer:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - api
+    networks:
+      - geotiff-network
+
+  # ===========================================
+  # LocalStack (AWS Services Mock)
+  # ===========================================
+  localstack:
+    image: localstack/localstack:latest
+    container_name: geotiff-localstack
+    restart: unless-stopped
+    environment:
+      SERVICES: s3
+      DEBUG: 1
+      DATA_DIR: /tmp/localstack/data
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+    ports:
+      - "4566:4566"
+    volumes:
+      - localstack_data:/tmp/localstack
+      - ./scripts/localstack-init.sh:/etc/localstack/init/ready.d/init-s3.sh
+    networks:
+      - geotiff-network
+
+  # ===========================================
+  # Redis (Future: Job Queue & Caching)
+  # ===========================================
+  redis:
+    image: redis:7-alpine
+    container_name: geotiff-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - geotiff-network
+
+# ===========================================
+# Named Volumes
+# ===========================================
+volumes:
+  postgres_data:
+    driver: local
+  localstack_data:
+    driver: local
+  redis_data:
+    driver: local
+  geotiff_temp:
+    driver: local
+
+# ===========================================
+# Networks
+# ===========================================
+networks:
+  geotiff-network:
+    driver: bridge
+    name: geotiff-network

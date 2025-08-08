@@ -1,302 +1,382 @@
-# GeoTIFF Showcase Tool
+# GeoTIFF Processing & Visualization Platform
 
-A powerful, web-based visualization tool for showcasing GeoTIFF photogrammetry outputs using Leaflet.js. Built with Next.js and **now supports enterprise-scale files up to 50GB+** with cloud-based processing and tile streaming.
+A powerful, enterprise-scale platform for processing and visualizing GeoTIFF files with cloud-based processing and interactive web-based viewing. **Now supports files up to 50GB+ with distributed processing and tile streaming.**
 
-![Project Status](https://img.shields.io/badge/status-production%20ready-brightgreen)
+![Project Status](https://img.shields.io/badge/status-development-yellow)
 ![Next.js](https://img.shields.io/badge/Next.js-15+-black)
+![NestJS](https://img.shields.io/badge/NestJS-10+-red)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue)
-![Leaflet](https://img.shields.io/badge/Leaflet.js-1.9+-green)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-blue)
+![Docker](https://img.shields.io/badge/Docker-compose-blue)
 
-## 🌟 Vision
+## 🏗️ Architecture
 
-Transform complex geospatial data into compelling visual stories that drive decision-making, client engagement, and project success through an intuitive, fast, and embeddable web platform.
+This platform follows a modern **monorepo microservices architecture** with:
 
-**The "Figma for Geospatial Data"** - simple, powerful, collaborative.
-
-## ✨ Key Features
-
-### Current (v1.0.2 - Phase 1 Complete) 🎉
-- ✅ **Real GeoTIFF Processing**: Full metadata extraction with geotiff.js library
-- ✅ **Advanced Coordinate Transformation**: UTM to WGS84 conversion with proj4
-- ✅ **Interactive File Upload**: Drag-and-drop with real-time validation and progress
-- ✅ **Professional Layer Management**: Opacity controls, visibility toggles, detailed metadata display
-- ✅ **Share & Collaboration**: URL generation, state export, Web Share API integration
-- ✅ **Professional Export**: PNG/JPEG export with multiple size presets and quality controls
-- ✅ **Comprehensive Settings**: Theme switching, performance tuning, UI preferences
-- ✅ **Enterprise-Grade Architecture**: TypeScript, Zustand state management, performance monitoring
-- ✅ **Production-Ready Foundation**: PWA manifest, CSP compliance, hydration handling, toast notifications  
-- ✅ **Build System**: Clean TypeScript builds, working ESLint, comprehensive test suite
-- ✅ **Development Experience**: Hot reload, error handling, performance monitoring
-
-### Next Phase Implementation
-
-#### Phase 2: Core PRD Features (Next Priority)
-- 🔄 **Multi-Layer Comparison**: Side-by-side viewer with synchronized pan/zoom
-- 🔄 **Swipe Comparison**: Interactive slider comparison mode
-- 🔄 **Annotation & Measurement**: Leaflet.Draw integration for drawings and measurements
-- 🔄 **Embedding System**: Iframe generator with customization options
-
-#### Phase 3: Advanced Features (Medium Priority)  
-- 📋 **Performance Optimization**: Progressive tile loading and memory management
-- 📋 **Enhanced UI/UX**: Fullscreen mode, enhanced mobile responsiveness
-- 📋 **Advanced Analytics**: Statistical analysis and data visualization
-
-#### Phase 4: Enterprise Infrastructure (Future)
-- 📋 **Large File Support**: Server-side GDAL processing for 50GB+ files
-- 📋 **Cloud Integration**: AWS S3/Google Cloud/Azure storage with CDN
-- 📋 **Batch Processing**: Multiple file processing queues
-- 📋 **White-Label Deployment**: Custom branding and API integration
-
-## 🎯 Target Users
-
-### 👥 Primary: Photogrammetry Professionals
-- Drone survey operators showcasing aerial survey results
-- Surveying companies presenting topographic analysis
-- Environmental consultants visualizing change detection
-
-### 🏢 Secondary: Clients & Stakeholders
-- Property developers understanding site conditions
-- Government officials reviewing environmental assessments
-- Project managers tracking progress validation
-
-### 🔧 Tertiary: Developers & Integrators
-- Agency developers embedding viewers in client sites
-- SaaS platform builders integrating spatial visualization
-- IT teams deploying enterprise spatial solutions
+- **Frontend**: Next.js 15 with existing leaflet-viewer (React + TypeScript + Leaflet.js)
+- **Backend**: NestJS API with TypeORM, PostgreSQL, and GDAL processing
+- **Storage**: AWS S3 + LocalStack for development
+- **Infrastructure**: Docker containers with health checks and monitoring
+- **Development**: Full docker-compose development environment
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-#### For Client-Side Development
-- Node.js 20.0+ LTS
-- Git 2.40.0+
-- Modern browser (Chrome 90+, Firefox 88+, Safari 14+)
-- GeoTIFF files in supported projections (WGS84, UTM Zone 10N tested)
+- **Node.js 20+** and **npm 10+**
+- **Docker & Docker Compose** 
+- **Git**
 
-#### For Enterprise/Large File Support
-- **Cloud Storage**: AWS S3, Google Cloud Storage, or Azure Blob Storage
-- **Database**: PostgreSQL 15+ (managed service recommended)
-- **Cache/Queue**: Redis 7+ (managed service recommended)
-- **Processing Server**: 16GB+ RAM, SSD storage for GDAL operations
-- **CDN**: CloudFlare, AWS CloudFront, or Google Cloud CDN
-
-### Installation
+### 1. Clone and Setup
 
 ```bash
-# Clone the repository
-git clone https://github.com/your-org/leaflet-viewer.git
+git clone https://github.com/kauf3r/leaflet-viewer.git
 cd leaflet-viewer
 
-# Install dependencies (includes geospatial libraries)
+# Install all dependencies (monorepo workspace)
 npm install
-
-# Run development server
-npm run dev
-
-# Open browser and upload GeoTIFF files
-# - Click "Upload GeoTIFF" button
-# - Drag & drop .tif/.tiff files
-# - View with automatic coordinate transformation
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the application.
-
-### Optional: Install CCPlugins
-Enhance your Claude Code CLI experience with professional commands:
+### 2. Environment Configuration
 
 ```bash
-# Mac/Linux
-curl -sSL https://raw.githubusercontent.com/brennercruvinel/CCPlugins/main/install.sh | bash
+# Copy environment configuration
+cp .env.example .env.local
 
-# Verify installation
-ls ~/.claude/commands/  # Should show 24 .md command files
+# The .env.local file contains development-ready values:
+# - Database: PostgreSQL with PostGIS
+# - Storage: LocalStack (AWS S3 mock)
+# - API: NestJS server on port 3001
+# - Frontend: Next.js on port 3000
 ```
 
-## 🛠️ Technology Stack
+### 3. Start Development Environment
 
-### Core Framework
-- **Next.js 15+**: React framework with App Router, SSR/SSG capabilities
-- **React 18+**: Component-based architecture
-- **TypeScript 5+**: Enhanced developer experience and type safety
+```bash
+# Start all services with Docker Compose
+npm run docker:up
 
-### Styling & UI
-- **Tailwind CSS 3.4+**: Utility-first CSS framework
-- **shadcn/ui**: Accessible, customizable component library
-- **Radix UI**: Headless UI primitives with ARIA compliance
-- **Lucide React**: Consistent iconography
+# Or start services individually:
+npm run dev:server    # NestJS API server
+npm run dev:viewer    # Next.js frontend
+```
 
-### Mapping & Geospatial
-- **Leaflet.js 1.9+**: Interactive maps with SSR-safe implementation
-- **GeoTIFF.js 2.1.0**: Real metadata extraction and file validation
-- **georaster 1.6.0**: Raster data processing and thumbnail generation
-- **georaster-layer-for-leaflet 3.10.0**: Advanced tile-based rendering
-- **proj4 2.19.10**: Coordinate system transformation (UTM to WGS84)
-- **GDAL.js 2.2.0**: WebAssembly geospatial processing
+### 4. Access Services
 
-### Backend & Cloud (Enterprise)
-- **Node.js/Express**: API server for file processing
-- **PostgreSQL**: Metadata and job tracking
-- **Redis**: Job queues and tile caching  
-- **Cloud Storage**: AWS S3, Google Cloud, Azure
-- **CDN**: Global tile delivery and caching
-
-### State & Performance
-- **Zustand 4.4.7**: State management with devtools and persistence
-- **Web Vitals 4.2.3**: Performance monitoring with local reporting
-- **Immer 10.0.3**: Immutable state updates
-- **Client-side optimization**: Hydration handling and CSP compliance
+- **Frontend (Viewer)**: http://localhost:3000
+- **API Documentation**: http://localhost:3001/api/docs
+- **Health Check**: http://localhost:3001/api/v1/health
+- **LocalStack S3**: http://localhost:4566
+- **PostgreSQL**: localhost:5432 (user: `user`, password: `pass`, database: `geotiff_db`)
 
 ## 📁 Project Structure
 
 ```
-src/
-├── app/                    # Next.js App Router
-│   ├── globals.css        # Global styles
-│   ├── layout.tsx         # Root layout with theme provider
-│   └── page.tsx           # Home page
-├── components/            # Reusable UI components
-│   ├── ui/               # shadcn/ui components (button, dialog, etc.)
-│   ├── map/              # Leaflet-specific components
-│   ├── layout/           # Layout components with integrated dialogs
-│   ├── upload/           # File handling and drag-and-drop
-│   ├── sharing/          # Share dialog and URL generation
-│   ├── export/           # Export dialog and image generation
-│   ├── settings/         # Settings dialog and preferences
-│   └── providers/        # Theme and context providers
-├── lib/                   # Utility functions and processors
-└── types/                 # TypeScript definitions
-
-docs/                      # Comprehensive documentation
-prd/                       # Product Requirements
-├── geotiff-viewer-prd.md # Detailed requirements
-CHANGELOG.md               # Version history and feature tracking
-CLAUDE.md                  # Development guidelines and status
-PLAN.md                    # Comprehensive development plan
-security-report.md         # Security audit and compliance
+leaflet-viewer/                  # Monorepo root
+├── packages/
+│   ├── viewer/                  # Next.js Frontend (existing)
+│   │   ├── src/                 # Components, pages, utilities
+│   │   ├── public/              # Static assets
+│   │   ├── package.json         # Frontend dependencies
+│   │   └── Dockerfile.dev       # Development container
+│   └── server/                  # NestJS Backend API (new)
+│       ├── src/
+│       │   ├── modules/         # Feature modules
+│       │   │   ├── health/      # Health checks & monitoring
+│       │   │   ├── files/       # File upload & management
+│       │   │   ├── processing/  # GeoTIFF processing pipeline
+│       │   │   └── tiles/       # Map tile serving
+│       │   ├── config/          # Configuration management
+│       │   ├── common/          # Shared utilities
+│       │   ├── app.module.ts    # Main application module
+│       │   └── main.ts          # Bootstrap & middleware
+│       ├── package.json         # Backend dependencies
+│       └── Dockerfile           # Production container
+├── scripts/                     # Development & deployment scripts
+├── docker-compose.yml           # Development environment
+├── .env.local                   # Development environment variables
+├── .env.example                 # Environment template
+└── package.json                 # Monorepo workspace configuration
 ```
 
-## 🏃‍♂️ Development Commands
+## 🛠️ Development
+
+### Building & Testing
 
 ```bash
-# Development
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run start        # Start production server
-npm run lint         # Run ESLint
-npm run type-check   # TypeScript validation
+# Build all packages
+npm run build
 
-# shadcn/ui Components
-npx shadcn-ui@latest add [component-name]
+# Build individual packages
+npm run build:server
+npm run build:viewer
 
-# CCPlugins Commands (if installed)
-/session-start       # Initialize development session
-/implement           # Structured feature development
-/review              # Code quality review
-/security-scan       # Security analysis
-/docs                # Documentation management
-```
+# Run tests
+npm run test
 
-## 🎨 Design System
+# Type checking
+npm run type-check
 
-Built with **shadcn/ui** components following modern design principles:
-
-- **Responsive First**: Mobile-friendly design patterns
-- **Accessibility**: WCAG 2.1 AA compliance
-- **Dark Mode**: Theme switching support
-- **Consistent**: Design tokens and spacing system
-- **Performant**: Optimized for large dataset visualization
-
-## 🔒 Security
-
-Security is a top priority with comprehensive measures:
-
-- **File Upload Validation**: Magic number checking, size limits, virus scanning
-- **SSRF Prevention**: URL allowlisting and request validation
-- **XSS Protection**: Input sanitization and CSP headers
-- **WebAssembly Safety**: Sandboxed processing environment
-- **Cloud Security**: Proper IAM and encryption for storage integrations
-
-See [security-report.md](./security-report.md) for detailed security analysis.
-
-## 📈 Performance Targets
-
-| Metric | MVP Target | Enterprise Target | Strategy |
-|--------|------------|-------------------|----------|
-| Initial Load | < 3s | < 10s | Code splitting + server-side tile generation |
-| Pan/Zoom | 60fps | 60fps | Tile-based rendering + GPU acceleration |
-| File Size Support | 1GB | 50GB+ | Server-side GDAL + chunked upload + COG |
-| Bundle Size | < 500KB | < 500KB | Strategic imports + tree shaking |
-| Concurrent Layers | 2-4 | 4-8 | Intelligent tile caching + server compositing |
-| Memory Usage | < 500MB | < 2GB browser | LRU tile cache + server processing |
-| Upload Speed | N/A | Resumable | Chunked upload with pause/resume |
-| Tile Serving | N/A | < 200ms | CDN delivery + smart caching |
-
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guidelines](./CONTRIBUTING.md) for details on:
-
-- Development setup and workflow
-- Code style and conventions  
-- Testing requirements
-- Pull request process
-- Issue reporting
-
-### Quick Contribution Setup
-
-```bash
-# Fork and clone the repository
-git clone https://github.com/your-username/leaflet-viewer.git
-
-# Create feature branch
-git checkout -b feature/your-feature-name
-
-# Install dependencies and start development
-npm install
-npm run dev
-
-# Run tests and linting
-npm test
+# Linting
 npm run lint
 ```
 
-## 📚 Documentation
+### API Development
 
-### Core Documentation
-- **[PLAN.md](./PLAN.md)**: Comprehensive development plan with enterprise architecture
-- **[CLAUDE.md](./CLAUDE.md)**: Project guidelines and current implementation status
-- **[CHANGELOG.md](./CHANGELOG.md)**: Complete version history and feature implementation
-- **[PRD](./prd/geotiff-viewer-prd.md)**: Product Requirements Document
-- **[Security Report](./security-report.md)**: Security analysis and mitigation strategies
+The NestJS API provides enterprise-grade GeoTIFF processing:
 
-### Technical Documentation
-- **[COORDINATE-SYSTEMS.md](./COORDINATE-SYSTEMS.md)**: Coordinate transformation and projection support
-- **[TROUBLESHOOTING.md](./TROUBLESHOOTING.md)**: Common issues and solutions
-- **[CLOUD-SETUP.md](./CLOUD-SETUP.md)**: Cloud infrastructure deployment guide (planned)
-- **[LARGE-FILES.md](./LARGE-FILES.md)**: Guide for handling 50GB+ GeoTIFF files (planned)
-- **[API.md](./API.md)**: Backend API documentation for enterprise features (planned)
-- **[PERFORMANCE.md](./PERFORMANCE.md)**: Enterprise optimization strategies (planned)
+```bash
+# Start API server in development mode
+cd packages/server
+npm run start:dev
 
-## 🔗 Useful Links
+# API endpoints available at http://localhost:3001/api/v1/
+# - POST /files/upload          # Upload GeoTIFF files
+# - GET  /files/{id}/status     # Check processing status  
+# - GET  /files/{id}/tiles      # Get tile configuration
+# - GET  /tiles/{id}/{z}/{x}/{y}.png  # Serve map tiles
+# - GET  /health                # System health checks
+```
 
-- **[Next.js Documentation](https://nextjs.org/docs)**: Framework documentation
-- **[Leaflet.js Guide](https://leafletjs.com/)**: Mapping library documentation
-- **[shadcn/ui Components](https://ui.shadcn.com/)**: UI component library
-- **[Tailwind CSS](https://tailwindcss.com/)**: Styling framework
-- **[CCPlugins](https://github.com/brennercruvinel/CCPlugins)**: Professional Claude Code commands
+### Database Management
+
+```bash
+# Access PostgreSQL directly
+docker exec -it geotiff-postgres psql -U user -d geotiff_db
+
+# View database logs
+docker logs geotiff-postgres
+
+# Reset database (destroys data!)
+docker-compose down -v
+docker-compose up postgres
+```
+
+## 🐳 Docker Development
+
+### Full Stack Development
+
+```bash
+# Start all services (recommended)
+docker-compose up
+
+# Start with rebuilding
+docker-compose up --build
+
+# Run in background
+docker-compose up -d
+
+# View logs
+docker-compose logs -f api
+docker-compose logs -f frontend
+
+# Stop all services
+docker-compose down
+```
+
+### Individual Service Development
+
+```bash
+# Backend API only
+docker-compose up postgres localstack
+cd packages/server && npm run start:dev
+
+# Frontend only
+cd packages/viewer && npm run dev
+```
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+Key configuration options in `.env.local`:
+
+```bash
+# API Server
+PORT=3001
+NODE_ENV=development
+
+# Database (PostgreSQL + PostGIS)
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=user
+DB_PASSWORD=pass
+DB_DATABASE=geotiff_db
+
+# File Processing
+MAX_FILE_SIZE=53687091200  # 50GB
+TILE_SIZE=256
+MAX_ZOOM_LEVEL=18
+TEMP_DIRECTORY=/tmp/geotiff-processing
+
+# AWS/LocalStack (S3 Storage)
+AWS_ACCESS_KEY_ID=test
+AWS_SECRET_ACCESS_KEY=test
+AWS_REGION=us-east-1
+AWS_S3_BUCKET=geotiff-dev-bucket
+
+# Frontend
+NEXT_PUBLIC_API_URL=http://localhost:3001/api/v1
+```
+
+### Production Configuration
+
+For production deployment, override these variables:
+- Use real AWS credentials and S3 bucket
+- Set `NODE_ENV=production`
+- Configure SSL certificates
+- Set strong JWT secrets
+- Configure proper database connection pooling
+
+## 🧪 Current Development Status
+
+### ✅ Story 1.1: Web Service Scaffolding (COMPLETED)
+
+- [x] Monorepo structure with npm workspaces
+- [x] NestJS backend with TypeScript
+- [x] Health check endpoints working
+- [x] Docker development environment
+- [x] PostgreSQL database with PostGIS
+- [x] LocalStack for S3 development
+- [x] CORS and security headers configured
+- [x] Environment variable management
+- [x] All packages building successfully
+
+### 🔄 Next Stories (In Progress)
+
+- **Story 1.2**: Database & ORM Setup (GeospatialFile entity, migrations)
+- **Story 1.3**: File Upload Service (S3 integration, validation)
+- **Story 1.4**: GeoTIFF Processing Pipeline (GDAL, COG conversion)
+- **Story 1.5**: Map Viewer Integration (API connection, tile serving)
+
+## 🚀 Deployment
+
+### Development Deployment
+
+```bash
+# Using Docker Compose (recommended)
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+### Production Deployment
+
+The platform is designed for cloud deployment with:
+- **AWS**: ECS/EKS + RDS PostgreSQL + S3
+- **Google Cloud**: GKE + Cloud SQL + Cloud Storage  
+- **Azure**: AKS + PostgreSQL + Blob Storage
+
+CI/CD pipeline with GitHub Actions is configured for automated deployments.
+
+## 🤝 Contributing
+
+1. **Fork the repository**
+2. **Create feature branch**: `git checkout -b feature/amazing-feature`
+3. **Follow the existing code patterns** and TypeScript conventions
+4. **Add tests** for new functionality
+5. **Ensure all builds pass**: `npm run build && npm run test`
+6. **Commit changes**: `git commit -m 'feat: add amazing feature'`
+7. **Push to branch**: `git push origin feature/amazing-feature`
+8. **Open Pull Request** with detailed description
+
+### Development Guidelines
+
+- **TypeScript First**: All new code must be TypeScript
+- **Test Coverage**: Maintain >80% test coverage
+- **API Documentation**: Update Swagger docs for API changes
+- **Error Handling**: Comprehensive error handling with proper HTTP status codes
+- **Security**: Follow OWASP guidelines, no secrets in code
+- **Performance**: Monitor bundle size and API response times
+
+## 📋 Troubleshooting
+
+### Common Issues
+
+**Port Already in Use**
+```bash
+# Check what's using the ports
+lsof -i :3000 -i :3001 -i :5432
+
+# Kill processes if needed
+docker-compose down
+```
+
+**Database Connection Issues**
+```bash
+# Verify PostgreSQL is running
+docker-compose logs postgres
+
+# Reset database
+docker-compose down -v && docker-compose up postgres
+```
+
+**File Upload Issues**
+```bash
+# Check API server logs
+docker-compose logs api
+
+# Verify LocalStack S3
+curl http://localhost:4566/health
+```
+
+**Build Failures**
+```bash
+# Clean all artifacts
+npm run clean
+
+# Reinstall dependencies
+rm -rf node_modules packages/*/node_modules
+npm install
+
+# Rebuild
+npm run build
+```
+
+## 📊 Performance & Monitoring
+
+### Health Checks
+
+- **API Health**: http://localhost:3001/api/v1/health
+- **Database Health**: Included in health check response
+- **Memory Usage**: Monitored via health endpoints
+- **Disk Usage**: Monitored for temp processing directory
+
+### Metrics & Monitoring
+
+- **Application Metrics**: Built into NestJS health checks
+- **Database Performance**: PostgreSQL logging enabled in development
+- **File Processing**: Progress tracking and status updates
+- **Error Tracking**: Comprehensive logging with structured output
+
+## 🔒 Security
+
+### Development Security
+
+- **Environment Isolation**: Separate development and production configs
+- **Input Validation**: All API inputs validated with class-validator
+- **File Upload Security**: File type validation, size limits, virus scanning planned
+- **SQL Injection Prevention**: TypeORM query builder and parameterization
+- **CORS Configuration**: Restricted origins, proper preflight handling
+
+### Production Security (Planned)
+
+- **Authentication**: JWT-based auth with refresh tokens
+- **Authorization**: Role-based access control
+- **HTTPS Enforcement**: SSL termination at load balancer
+- **Security Headers**: Helmet.js with strict CSP
+- **Rate Limiting**: API rate limiting and DDoS protection
+- **Data Encryption**: At-rest and in-transit encryption
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - see [LICENSE](LICENSE) file for details.
 
 ## 🙋‍♂️ Support
 
-- **Issues**: [GitHub Issues](https://github.com/your-org/leaflet-viewer/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-org/leaflet-viewer/discussions)
-- **Email**: your-email@example.com
+- **Documentation**: Check `/docs` directory for detailed guides
+- **Issues**: Report bugs via GitHub Issues
+- **Discussions**: Use GitHub Discussions for questions
+- **Email**: Contact maintainers for enterprise support
 
 ---
 
-**Built with ❤️ for the geospatial community**
-
-*Transforming complex spatial data into compelling visual stories that drive decision-making and client engagement.*
+**Ready to transform your geospatial data visualization? Let's build something amazing! 🌍✨**
