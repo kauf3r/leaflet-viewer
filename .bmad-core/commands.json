@@ -1,0 +1,169 @@
+{
+  "commands": [
+    {
+      "name": "dev",
+      "description": "Start development server with Turbopack",
+      "command": "npm run dev",
+      "category": "development",
+      "hotkey": "cmd+shift+d"
+    },
+    {
+      "name": "build",
+      "description": "Build production bundle",
+      "command": "npm run build",
+      "category": "production",
+      "hotkey": "cmd+shift+b"
+    },
+    {
+      "name": "test",
+      "description": "Run all tests with coverage",
+      "command": "npm test -- --coverage",
+      "category": "testing",
+      "hotkey": "cmd+shift+t"
+    },
+    {
+      "name": "test:watch",
+      "description": "Run tests in watch mode",
+      "command": "npm run test:watch",
+      "category": "testing"
+    },
+    {
+      "name": "e2e",
+      "description": "Run E2E tests with Playwright",
+      "command": "npm run test:e2e",
+      "category": "testing"
+    },
+    {
+      "name": "lint",
+      "description": "Run ESLint and TypeScript checks",
+      "command": "npm run lint && npm run type-check",
+      "category": "quality",
+      "hotkey": "cmd+shift+l"
+    },
+    {
+      "name": "format",
+      "description": "Format code with Prettier",
+      "command": "npm run format",
+      "category": "quality"
+    },
+    {
+      "name": "analyze",
+      "description": "Analyze bundle size",
+      "command": "npm run bundle-analyzer",
+      "category": "performance"
+    },
+    {
+      "name": "clean",
+      "description": "Clean build artifacts and caches",
+      "command": "rm -rf .next node_modules/.cache",
+      "category": "maintenance"
+    },
+    {
+      "name": "install",
+      "description": "Install dependencies",
+      "command": "npm install",
+      "category": "setup"
+    },
+    {
+      "name": "upgrade",
+      "description": "Upgrade dependencies interactively",
+      "command": "npx npm-check-updates -i",
+      "category": "maintenance"
+    },
+    {
+      "name": "geotiff:process",
+      "description": "Process GeoTIFF file with GDAL",
+      "command": "node scripts/process-geotiff.js",
+      "category": "geospatial",
+      "args": ["--file", "--output"]
+    },
+    {
+      "name": "map:tiles",
+      "description": "Generate map tiles from GeoTIFF",
+      "command": "node scripts/generate-tiles.js",
+      "category": "geospatial",
+      "args": ["--input", "--zoom", "--format"]
+    },
+    {
+      "name": "component:create",
+      "description": "Create new React component",
+      "command": "node scripts/create-component.js",
+      "category": "development",
+      "args": ["--name", "--type"]
+    },
+    {
+      "name": "shadcn:add",
+      "description": "Add shadcn/ui component",
+      "command": "npx shadcn-ui@latest add",
+      "category": "ui",
+      "args": ["component-name"]
+    },
+    {
+      "name": "docker:build",
+      "description": "Build Docker image",
+      "command": "docker build -t leaflet-viewer .",
+      "category": "deployment"
+    },
+    {
+      "name": "docker:run",
+      "description": "Run Docker container",
+      "command": "docker run -p 3000:3000 leaflet-viewer",
+      "category": "deployment"
+    },
+    {
+      "name": "deploy:vercel",
+      "description": "Deploy to Vercel",
+      "command": "vercel",
+      "category": "deployment"
+    },
+    {
+      "name": "db:migrate",
+      "description": "Run database migrations",
+      "command": "npx prisma migrate dev",
+      "category": "database"
+    },
+    {
+      "name": "security:audit",
+      "description": "Run security audit",
+      "command": "npm audit && npm audit fix",
+      "category": "security"
+    }
+  ],
+  "workflows": [
+    {
+      "name": "pre-commit",
+      "description": "Pre-commit checks",
+      "steps": [
+        "lint",
+        "format",
+        "test"
+      ]
+    },
+    {
+      "name": "pre-deploy",
+      "description": "Pre-deployment checks",
+      "steps": [
+        "lint",
+        "test",
+        "build",
+        "security:audit"
+      ]
+    },
+    {
+      "name": "new-feature",
+      "description": "Start new feature development",
+      "steps": [
+        "git checkout -b feature/$FEATURE_NAME",
+        "component:create",
+        "dev"
+      ]
+    }
+  ],
+  "aliases": {
+    "d": "dev",
+    "b": "build",
+    "t": "test",
+    "l": "lint",
+    "f": "format"
+  }
+}

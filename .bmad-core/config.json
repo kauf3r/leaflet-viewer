@@ -1,0 +1,106 @@
+{
+  "project": {
+    "name": "leaflet-viewer",
+    "version": "1.0.2",
+    "description": "Enterprise-scale GeoTIFF visualization tool with Leaflet.js",
+    "type": "nextjs-geospatial",
+    "repository": "https://github.com/your-org/leaflet-viewer.git"
+  },
+  "features": {
+    "geotiff": {
+      "enabled": true,
+      "maxFileSize": "50GB",
+      "supportedFormats": [".tif", ".tiff", ".gtiff"],
+      "processors": ["gdal-js", "geotiff", "georaster"],
+      "tileStreaming": true,
+      "cloudOptimized": true
+    },
+    "mapping": {
+      "library": "leaflet",
+      "projections": ["EPSG:4326", "EPSG:26910", "EPSG:26911", "EPSG:3857"],
+      "basemaps": ["OpenStreetMap", "Satellite", "Terrain"],
+      "controls": ["zoom", "layers", "scale", "attribution"]
+    },
+    "ui": {
+      "framework": "shadcn-ui",
+      "styling": "tailwindcss",
+      "themes": ["light", "dark", "system"],
+      "animations": true,
+      "responsive": true
+    },
+    "analysis": {
+      "tools": ["measurement", "coordinates", "queries"],
+      "export": ["png", "jpeg", "pdf"],
+      "sharing": ["url", "embed", "api"]
+    }
+  },
+  "development": {
+    "framework": "next",
+    "version": "15.4.5",
+    "typescript": true,
+    "turbopack": true,
+    "testing": {
+      "unit": "jest",
+      "e2e": "playwright",
+      "coverage": true
+    },
+    "linting": {
+      "eslint": true,
+      "prettier": true,
+      "husky": true
+    },
+    "bundler": {
+      "analyzer": true,
+      "optimization": "aggressive",
+      "splitting": {
+        "mapping": ["leaflet", "geotiff", "gdal-js"],
+        "ui": ["@radix-ui", "lucide-react"],
+        "core": ["react", "react-dom", "next"]
+      }
+    }
+  },
+  "performance": {
+    "targets": {
+      "fcp": 1500,
+      "lcp": 2500,
+      "fid": 100,
+      "cls": 0.1,
+      "ttfb": 600
+    },
+    "monitoring": {
+      "webVitals": true,
+      "errorTracking": true,
+      "analytics": false
+    },
+    "optimization": {
+      "lazyLoading": true,
+      "codeSpitting": true,
+      "imageOptimization": true,
+      "caching": "aggressive"
+    }
+  },
+  "deployment": {
+    "platforms": ["vercel", "netlify", "aws", "docker"],
+    "environment": {
+      "node": "20.x",
+      "npm": "10.x"
+    },
+    "build": {
+      "command": "npm run build",
+      "output": ".next"
+    }
+  },
+  "ai": {
+    "assistants": ["claude", "cursor", "gemini", "copilot"],
+    "codeGeneration": true,
+    "testing": true,
+    "documentation": true,
+    "review": true
+  },
+  "security": {
+    "csp": true,
+    "headers": "strict",
+    "scanning": true,
+    "dependencies": "audit"
+  }
+}
